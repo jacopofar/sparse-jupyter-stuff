@@ -15,7 +15,7 @@ import os
 # parameters that could me moved to CLI arguments if needed. But I'm lazy
 messages_file = open('messages.tsv', 'w', encoding='utf8')
 online_presence_file = open('online.tsv', 'w', encoding='utf8')
-tg_cli_logs_folder = '~/Documents/my/tgdocker'
+tg_cli_logs_folder = os.path.expanduser('~/Documents/my/tgdocker/')
 
 
 messages_file.write('user_id\tuser_print_name\tto_id\tto_print_name\ttimestamp\ttext\n')
