@@ -29,7 +29,7 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
             if len(line_without_ansi) < 10:
                 continue
             obj = json.loads(line_without_ansi.encode('utf8'))
-            if 'text' in obj:
+            if 'text' in obj and obj["event"] == 'message':
                 messages_file.write('\t'.join([
                     str(obj['from']['peer_id']),
                     obj['from']['print_name'],
