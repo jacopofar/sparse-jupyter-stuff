@@ -50,7 +50,7 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                 ]))
                 continue
             # a message but has no text (that's it, multimedia), is ignored
-            if obj['event'] == 'message':
+            if obj.get('event','?') == 'message':
                 continue
             if 'event' in obj and obj['event'] == 'online-status' and obj['online']:
                 online_presence_file.write('\t'.join([
