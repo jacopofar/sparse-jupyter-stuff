@@ -8,6 +8,7 @@
 
 # This script read these logs and produces clean TSV files with the online status and the messages
 
+import csv
 import datetime
 import json
 import os
