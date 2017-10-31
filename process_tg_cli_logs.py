@@ -17,9 +17,12 @@ messages_file = open('messages.tsv', 'w', encoding='utf8')
 online_presence_file = open('online.tsv', 'w', encoding='utf8')
 tg_cli_logs_folder = os.path.expanduser('~/Documents/my/tgdocker/')
 
-
+# No with statement here, if it fails just stops
 messages_file.write('user_id\tuser_print_name\tto_id\tto_print_name\ttimestamp\ttext\n')
-messages_file.write('user_id\tuser_print_name\ttimestamp\n')
+online_presence_file.write('user_id\tuser_print_name\ttimestamp\n')
+
+message_writer = csv.writer(messages_file, delimiter='\t', newline='\n')
+presence_writer = csv.writer(online_presence_file, delimiter='\t', newline='\n')
 
 for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file() and f.name.startswith('complete_logs_')]:
     print(logfile_path)
@@ -30,35 +33,30 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                 continue
             obj = json.loads(line_without_ansi.encode('utf8'))
             if 'text' in obj and obj.get("event","?") == 'message':
-                messages_file.write('\t'.join([
-                    str(obj['from']['peer_id']),
+                message_writer.writerow([str(obj['from']['peer_id']),
                     obj['from']['print_name'],
                     str(obj['to']['peer_id']),
                     obj['to']['print_name'],
                     str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat()),
-                    obj['text'],
-                    '\n'
-                ]))
+                    obj['text'].replace('\t', ' ')])
                 continue
 
             if 'event' in obj and obj['event'] == 'read':
-                online_presence_file.write('\t'.join([
+                presence_writer.writerow([
                     str(obj['from']['peer_id']),
                     obj['from']['print_name'],
-                    str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat()),
-                    '\n'
-                ]))
+                    str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat())
+                ])
                 continue
             # a message but has no text (that's it, multimedia), is ignored
             if obj.get('event','?') == 'message':
                 continue
             if 'event' in obj and obj['event'] == 'online-status' and obj['online']:
-                online_presence_file.write('\t'.join([
+                presence_writer.writerow([
                     str(obj['user']['peer_id']),
                     obj['user']['print_name'],
                     # for some reason, tg-cli uses two different date formats for messages/reads and online statuses
                     # so ugly :(
-                    obj['when'].replace(' ', 'T'),
-                    '\n'
-                ]))
+                    obj['when'].replace(' ', 'T')
+                ])
                 continue
