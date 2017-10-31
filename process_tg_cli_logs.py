@@ -22,8 +22,8 @@ tg_cli_logs_folder = os.path.expanduser('~/Documents/my/tgdocker/')
 messages_file.write('user_id\tuser_print_name\tto_id\tto_print_name\ttimestamp\ttext\n')
 online_presence_file.write('user_id\tuser_print_name\ttimestamp\n')
 
-message_writer = csv.writer(messages_file, delimiter='\t', newline='\n')
-presence_writer = csv.writer(online_presence_file, delimiter='\t', newline='\n')
+message_writer = csv.writer(messages_file, delimiter='\t')
+presence_writer = csv.writer(online_presence_file, delimiter='\t')
 
 for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file() and f.name.startswith('complete_logs_')]:
     print(logfile_path)
