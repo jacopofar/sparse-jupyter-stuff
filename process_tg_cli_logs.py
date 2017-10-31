@@ -25,6 +25,9 @@ online_presence_file.write('user_id\tuser_print_name\ttimestamp\n')
 message_writer = csv.writer(messages_file, delimiter='\t')
 presence_writer = csv.writer(online_presence_file, delimiter='\t')
 
+message_count = 0
+presence_count = 0
+
 for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file() and f.name.startswith('complete_logs_')]:
     print(logfile_path)
     with open(logfile_path, 'r', encoding='utf-8') as logfile:
@@ -40,6 +43,7 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                     obj['to']['print_name'],
                     str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat()),
                     obj['text'].replace('\t', ' ')])
+                message_count += 1
                 continue
 
             if 'event' in obj and obj['event'] == 'read':
@@ -48,6 +52,7 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                     obj['from']['print_name'],
                     str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat())
                 ])
+                presence_count += 1
                 continue
             # a message but has no text (that's it, multimedia), is ignored
             if obj.get('event','?') == 'message':
@@ -60,4 +65,6 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                     # so ugly :(
                     obj['when'].replace(' ', 'T')
                 ])
+                presence_count +=1
                 continue
+print(f'Log files processed, saw {message_count} messages and {presence_count} presence records')
