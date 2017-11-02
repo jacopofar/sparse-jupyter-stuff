@@ -42,7 +42,7 @@ for logfile_path in [f.path for f in os.scandir(tg_cli_logs_folder) if f.is_file
                     str(obj['to']['peer_id']),
                     obj['to']['print_name'],
                     str(datetime.datetime.utcfromtimestamp(int(obj['date'])).isoformat()),
-                    obj['text'].replace('\t', ' ')])
+                    obj['text'].replace('\n', ' ')])
                 message_count += 1
                 continue
 
